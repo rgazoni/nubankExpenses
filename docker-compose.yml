@@ -1,0 +1,31 @@
+version: "3.9"  # optional since v1.27.0
+
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysqldb/dbdata:/var/lib/mysql
+      - ./mysqldb/scripts:/docker-entrypoint-initdb.d
+    networks:
+      - backend
+    container_name: db
+  app:
+    build: ./pynubank
+    image: rgazoni/pynubank
+    restart: always
+    volumes:
+      - ./pynubank/pynu:/app
+    networks:
+      - backend
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    container_name: py_nu
+
+networks:
+  backend:
+    driver: bridge
