@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 '''
-WARNING: Be careful, Nubank can block your account for 72 hours if it detects any abnormal behavior! Because of this, avoid sending too many requests. You can also use the MockHttpClient, for more information: https://github.com/andreroggeri/pynubank 
+WARNING: Be careful, Nubank can block your account for 72 hours if it detects any abnormal behavior! 
+Because of this, avoid sending too many requests.
+You can also use the MockHttpClient, for more information: https://github.com/andreroggeri/pynubank 
 
 '''
 
@@ -27,5 +29,4 @@ if __name__ == '__main__':
     
     cpf,password,path_cert = args_requirements()
     nu = Account(cpf,password,path_cert)
-#   To see if it's working print your account balance
-#   print(nu.get_account_balance())
+    nu.feed_todays_data('account')
