@@ -8,8 +8,11 @@ from pynubank import Nubank
 from datetime import date
 
 #Account titles
-RECEIVED_TRANSACTION = 'Transferência recebida'
+TRANSFER_RECEIVED = 'Transferência recebida'
 TRANSFER_SENT = 'Transferência enviada'
+DEBIT_PURCHASE = 'Compra no débito'
+PAYMENT_EFFECTED = 'Pagamento efetuado'
+DEPOSIT_RECEIVED = 'Depósito recebido'
 
 class Account(Nubank):
 
@@ -50,20 +53,46 @@ class Account(Nubank):
             index += 1
         return data
 
-    def _received_transaction(self, data):
-        title = 'Received transaction'
+    def _transfer_received(self, data):
+        title = 'Transfer Received'
         amount = data['amount']
         name = data['originAccount']['name']
-        #TODO date info
+        date = data['postDate']
+        print(f"Title: Transfer Received\nName: {name}\nAmount: {amount} reais\nDate: {date}\n --------------------------------")
         #TODO call DB class to store transaction
 
     def _transfer_sent(self, data):
         rawStr = data['detail']
         title = 'Transfer Sent'
-        amount = rawStr[rawStr.find(u'\xa0'):] 
-        name = rawStr[0:rawStr.find(u'\n')]
+        amount = rawStr[rawStr.find(u'\xa0'):].replace(',','.')
+        name = rawStr[0:rawStr.find(' - ')]
         date = data['postDate']
         print(f"Title: Transfer sent\nName: {name}\nAmount:{amount} reais\nDate: {date}\n --------------------------------")
+        #TODO call DB class to store transaction
+
+    def _debit_purchase(self, data):
+        rawStr = data['detail']
+        title = 'Debit Purchase'
+        amount = data['amount']
+        date = data['postDate']
+        name = rawStr[0:rawStr.find(' -')]
+        print(f"Title: Debit Purchase\nName: {name}\nAmount: {amount} reais\nDate: {date}\n --------------------------------")
+        #TODO call DB class to store transaction
+
+    def _payment_effected(self, data):
+        title = 'Payment Purchase'
+        name = data['detail']
+        date = data['postDate']
+        amount = data['amount']
+        print(f"Title: Payment Effected\nName: {name}\nAmount: {amount} reais\nDate: {date}\n --------------------------------")
+        #TODO call DB class to store transaction
+
+    def _deposit_received(self, data):
+        title = 'Deposit Received'
+        amount = data['amount']
+        date = data['postDate']
+        name = 'TransferInEvent'
+        print(f"Title: Deposit Received\nName: {name}\nAmount: {amount} reais\nDate: {date}\n --------------------------------")
         #TODO call DB class to store transaction
 
     def feed_todays_data(self, request):
@@ -79,10 +108,17 @@ class Account(Nubank):
         for index in range(0, len(data)):
 
             if(self.type_request == 'account'):
-                if(data[index]['title'] == RECEIVED_TRANSACTION):
-                    self._received_transaction(data[index])
+                if(data[index]['title'] == TRANSFER_RECEIVED):
+                    self._transfer_received(data[index])
                 elif(data[index]['title'] == TRANSFER_SENT):
                     self._transfer_sent(data[index])
+                elif(data[index]['title'] == DEBIT_PURCHASE):
+                    self._debit_purchase(data[index])
+                elif(data[index]['title'] == PAYMENT_EFFECTED):
+                    self._payment_effected(data[index])
+                elif(data[index]['title'] == DEPOSIT_RECEIVED):
+                    self._deposit_received(data[index])
             
             else: #credit card request
+                print('Nothing implemented yet')
                 pass
