@@ -9,7 +9,7 @@ This project is under development...
 <br />
 
 ## How to set things up
-# 
+<br />
 To set up the enviroment:
 
 <code> docker-compose up -d --build</code>

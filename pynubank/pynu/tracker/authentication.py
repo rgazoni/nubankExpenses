@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 '''
-WARNING: Be careful, Nubank can block your account for 72 hours if it detects any abnormal behavior! Because of this, avoid sending too many requests. You can also use the MockHttpClient, for more information: https://github.com/andreroggeri/pynubank 
+WARNING: Be careful, Nubank can block your account for 72 hours if it detects any abnormal behavior! 
+Because of this, avoid sending too many requests.
+You can also use the MockHttpClient, for more information: https://github.com/andreroggeri/pynubank 
 
 '''
 
 import sys
 import argparse
 from pynubank import Nubank
+from account import Account
 
 def args_requirements():
     parser = argparse.ArgumentParser(description='Nubank authentication')
@@ -23,8 +26,7 @@ def args_requirements():
 
 
 if __name__ == '__main__':
-    nu = Nubank()
-    cpf,password,cert = args_requirements()
-    nu.authenticate_with_cert(cpf,password,cert)
-#   To see if it's working print your account balance
-#   print(nu.get_account_balance())
+    
+    cpf,password,path_cert = args_requirements()
+    nu = Account(cpf,password,path_cert)
+    nu.feed_todays_data('account')
